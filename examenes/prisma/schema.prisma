@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  password  String
+  role      String   @default("student") // "admin" o "student"
+  scores    Score[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Question {
+  id               String   @id @default(uuid())
+  category         String
+  type             String   @default("multiple")
+  difficulty       String   @default("medium")
+  questionText     String
+  correctAnswer    String
+  incorrectAnswers String   // Almacenado como JSON en un string
+  createdAt        DateTime @default(now())
+}
+
+model Score {
+  id        String   @id @default(uuid())
+  points    Int
+  total     Int
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
